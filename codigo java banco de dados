@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Sistem_aut {
+public class SistemaAutomóveis {
     static String driverJDBC = "org.postqresql.Driver";
-    private static final String URL = "jdbc:postgresql://127.0.0..1:5432/Sistem_aut";
+    private static final String URL = "jdbc:postgresql://127.0.0..1:5432/SistemaAutomóveis";
 
     public static void main(String[] args) {
         try (Connection conn = DriverManager.getConnection(driver, "postgres", "password");
