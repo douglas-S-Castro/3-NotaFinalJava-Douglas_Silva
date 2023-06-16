@@ -136,7 +136,7 @@ public class Sistem_aut {
             if (rowsUpdated > 0) {
                 System.out.println("Automóvel atualizado com sucesso!");
             } else {
-                System.out.println("Falha ao atualizar o automóvel. Verifique o ID informado.");
+                System.out.println("Falha ao atualizar o automóvel. Verifique a numeração informado.");
             }
         }
     }
