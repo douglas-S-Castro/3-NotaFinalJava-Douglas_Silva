@@ -1,0 +1,194 @@
+import java.sql.*;
+import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.ArrayList;
+
+public class Sistem_aut {
+    static String driverJDBC = "org.postqresql.Driver";
+    private static final String URL = "jdbc:postgresql://127.0.0..1:5432/Sistem_aut";
+
+    public static void main(String[] args) {
+        try (Connection conn = DriverManager.getConnection(driver, "postgres", "password");
+             Scanner scanner = new Scanner(System.in)) {
+
+            while (true) {
+                System.out.println("\nSistema de Automóveis");
+                System.out.println("1. Cadastrar um automóvel");
+                System.out.println("2. Listar automóveis");
+                System.out.println("3. Atualizar automóvel");
+                System.out.println("4. Excluir automóvel");
+                System.out.println("5. Buscar automóvel");
+                System.out.println("0. Sair");
+                System.out.print("Escolha uma opção: ");
+                int opcao = scanner.nextInt();
+
+                switch (opcao) {
+                    case 1:
+                        cadastrar(conn, scanner);
+                        break;
+                    case 2:
+                        Listar(conn);
+                        break;
+                    case 3:
+                        Atualizar(conn, scanner);
+                        break;
+                    case 4:
+                        Excluir(conn, scanner);
+                        break;
+                    case 5:
+                        Buscar(conn, scanner);
+                        break;
+                    case 0:
+                        System.out.println("Saindo do sistema...");
+                        return;
+                    default:
+                        System.out.println("Opção inválida!");
+                        break;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void cadastrar(Connection conn, Scanner scanner) throws SQLException {
+        System.out.println("\nCadastrar um automóvel");
+
+        System.out.print("Marca: ");
+        String marca = scanner.next();
+
+        System.out.print("Modelo: ");
+        String modelo = scanner.next();
+
+        System.out.print("Ano: ");
+        int ano = scanner.nextInt();
+
+        System.out.print("Cor: ");
+        String cor = scanner.next();
+
+        System.out.print("Placa: ");
+        String placa = scanner.next();
+
+        String sql = "INSERT INTO automoveis (marca, modelo, ano, cor, placa) VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, marca);
+            statement.setString(2, modelo);
+            statement.setInt(3, ano);
+            statement.setString(4, cor);
+            statement.setString(5, placa);
+
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Automóvel cadastrado com sucesso!");
+            } else {
+                System.out.println("Falha ao cadastrar o automóvel.");
+            }
+        }
+    }
+
+    private static void Listar(Connection conn) throws SQLException {
+        System.out.println("\nLista de Automóveis");
+
+        String sql = "SELECT * FROM automoveis";
+
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
+                int numero = resultSet.getInt("numero");
+                String marca = resultSet.getString("marca");
+                String modelo = resultSet.getString("modelo");
+                int ano = resultSet.getInt("ano");
+                String cor = resultSet.getString("cor");
+                String placa = resultSet.getString("placa");
+
+                System.out.println("Numeração: " + numero);
+                System.out.println("Marca: " + marca);
+                System.out.println("Modelo: " + modelo);
+                System.out.println("Ano: " + ano);
+                System.out.println("Cor: " + cor);
+                System.out.println("Placa: " + placa);
+                System.out.println("-----------");
+            }
+        }
+    }
+
+    private static void Atualizar(Connection conn, Scanner scanner) throws SQLException {
+        System.out.println("\nAtualizar um automóvel");
+
+        System.out.print("Numeração do automóvel: ");
+        int nome = scanner.nextInt();
+
+        System.out.print("Nova cor: ");
+        String cor = scanner.next();
+
+        String sql = "UPDATE automoveis SET cor = ? WHERE numero = ?";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, cor);
+            statement.setInt(2, numero);
+
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Automóvel atualizado com sucesso!");
+            } else {
+                System.out.println("Falha ao atualizar o automóvel. Verifique o ID informado.");
+            }
+        }
+    }
+
+    private static void Excluir(Connection conn, Scanner scanner) throws SQLException {
+        System.out.println("\nExcluir um automóvel");
+
+        System.out.print("Numeração do automóvel: ");
+        int numero = scanner.nextInt();
+
+        String sql = "DELETE FROM automoveis WHERE numero = ?";
+
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, numero);
+
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Excluído com sucesso!");
+            } else {
+                System.out.println("Falha ao excluir o automóvel. Verifique a Numeração informado.");
+            }
+        }
+    }
+    private static void Buscar(Connection conn, Scanner scanner) throws SQLException{
+        System.out.println("\n Buscar automóvel por Numeração");
+        System.out.print("Numero do automóvel que deseja buscar: ");
+        int numero = scanner.nextInt();
+        
+        String sql = "SELECT * FROM automoveis WHERE numero = ?";
+        
+        try(PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, numero);
+            
+            try(ResultSet resultSet = statement.executeQuery()){
+                if(resultSet.next()) {
+                   String marca = resultSet.getString("marca");
+                   String modelo = resultSet.getString("modelo");
+                   int ano = resultSet.getInt("ano");
+                   String cor = resultSet.getString("cor");
+                   String placa = resultSet.getString("placa");
+                   
+                   System.out.println("Numeração: " + numero);
+                   System.out.println("Marca: " + marca);
+                   System.out.println("Modelo: " + modelo);
+                   System.out.println("Ano: " + ano);
+                   System.out.println("Cor: " + cor);
+                   System.out.println("placa: " + placa);
+                }else{
+                    System.out.println("automovel não encontrado!");
+                }
+            }
+        }
+    }
+
+}
