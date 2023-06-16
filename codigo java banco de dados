@@ -121,7 +121,7 @@ public class Sistem_aut {
         System.out.println("\nAtualizar um automóvel");
 
         System.out.print("Numeração do automóvel: ");
-        int nome = scanner.nextInt();
+        int numero = scanner.nextInt();
 
         System.out.print("Nova cor: ");
         String cor = scanner.next();
